@@ -5,9 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 import java.io.*;
-import java.time.*;
 import java.util.*;
-
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
@@ -18,11 +17,17 @@ public class Recipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private int serves;
 
-    @ElementCollection
-    private Set<String> ingredients;
+    @NotEmpty
+    private String name;
+
+    @NotNull
+    private Integer serves;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> ingredients;
+
+    @NotEmpty
     private String instructions;
 
     public String toString() {

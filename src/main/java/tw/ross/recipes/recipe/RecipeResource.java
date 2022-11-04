@@ -1,7 +1,9 @@
 package tw.ross.recipes.recipe;
 
 import jakarta.inject.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.*;
 
 import java.util.*;
@@ -12,59 +14,76 @@ public class RecipeResource {
     @Inject
     private RecipeService recipeService;
 
+    // CREATE
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Recipe createRecipe(Recipe recipe) {
+        recipeService.addRecipe(recipe);
+        return recipe;
+    }
+
+    // READ
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Recipe> hello() {
-        return recipeService.allRecipes();
+    public List<Recipe> getRecipes(
+            @QueryParam("serves") int serves
+            ) {
+
+        return recipeService.getRecipeList(serves);
     }
 
-    // CREATE
-//    @RequestMapping(value = "/recipe", method = RequestMethod.POST)
-    @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public String createRecipe(Recipe recipe) {
-        recipeService.addRecipe(recipe);
-        return recipe.toString();
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Recipe getRecipe(@PathParam("id") int id) {
+        try {
+            return recipeService.findRecipe(id);
+        } catch (EntityNotFoundException e) {
+            throw new NotFoundException();
+        } catch (Exception e) {
+            throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);
+        }
     }
-//
-//    // READ
-//    @RequestMapping(value = "/recipe/{id}", method = RequestMethod.GET)
-//    public @ResponseBody Recipe getRecipe(@PathVariable Long id) {
-//        return recipeService.getRecipe(id);
-//    }
-//    // UPDATE
-//    // DELETE
-//    @RequestMapping(value = "/recipe/{id}", method = RequestMethod.DELETE)
-//    public HttpStatus deleteRecipe(@PathVariable Long id) {
-//        recipeService.deleteRecipe(id);
-//        return HttpStatus.NO_CONTENT;
-//    }
-//
-//    @RequestMapping(value = "/recipe/{name}", method = RequestMethod.GET)
-//    public List<Person> getPersonByName(@PathVariable String name) {
-//        return recipeService.findByName(name);
-//    }
 
-//    @RequestMapping(value = "/recipe", method = RequestMethod.GET)
-//    public Set<Recipe> getAll() {
-//        return recipeService.getAllPersons();
-//    }
+    // UPDATE
+    @PATCH
+    @Consumes("application/merge-patch+json")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Recipe patch(@PathParam("id") int id, Recipe recipe) {
+        // if client tries to patch the id, return 400
+        if (Objects.nonNull(recipe.getId()) && recipe.getId() != id) {
+            throw new ClientErrorException(Status.BAD_REQUEST);
+        }
 
+        try {
+            // make sure to-be-updated resource exists
+            recipeService.findRecipe(id);
 
+            // update and return resource
+            return recipeService.updateRecipe(recipe);
 
+        }
+        catch (EntityNotFoundException e) {throw new NotFoundException();}
+        catch (Exception e) { throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);}
+    }
 
-//    @RequestMapping(value = "/recipe", method = RequestMethod.PUT)
-//    public HttpStatus updatePerson(@RequestBody Person person) {
-//        return personService.updatePerson(person) ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
-//    }
+    // DELETE
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Response delete(@PathParam("id") int id) {
+        try {
+            recipeService.removeRecipe(id);
+            return Response
+                    .ok()
+                    .build();
+        } catch (EntityNotFoundException e) {
+            throw new NotFoundException();
+        } catch (Exception e) {
+            throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-//    @GetMapping("/{id}", produces = "application/json")
-//    public Book getBook(@PathVariable int id) {
-//        return findBookById(id);
-//    }
-//
-//    private Book findBookById(int id) {
-//        // ...
-//    }
 }

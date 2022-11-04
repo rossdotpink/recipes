@@ -9,7 +9,7 @@
 //
 //@Singleton
 //@Startup
-//public class RecipeBootstrap {
+//public class RecipesBootstrap {
 //
 //    @PersistenceContext
 //    private EntityManager entityManager;
