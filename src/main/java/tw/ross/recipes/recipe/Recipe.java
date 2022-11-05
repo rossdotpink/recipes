@@ -1,13 +1,11 @@
 package tw.ross.recipes.recipe;
 
-import jakarta.persistence.Entity;
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.io.*;
 import java.util.*;
-import jakarta.validation.constraints.*;
-import lombok.*;
 
 @Entity
 @Table(name = "recipe")
@@ -24,15 +22,18 @@ public class Recipe implements Serializable {
     @NotNull
     private Integer serves;
 
+    @NotNull
+    private Boolean vegetarian;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ingredients;
 
     @NotEmpty
     private String instructions;
 
-    public String toString() {
-        return "Recipe called " + name;
-    }
+//    public String toString() {
+//        return "Recipe called " + name;
+//    }
 
 
 }

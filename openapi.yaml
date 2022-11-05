@@ -1,0 +1,168 @@
+openapi: 3.0.1
+info:
+  title: recipes
+  version: '1.0-SNAPSHOT'
+paths:
+  /recipes/recipe:
+    get:
+      operationId: getRecipes
+      description: Returns all recipes.
+      parameters:
+        - name: serves
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+    post:
+      operationId: createRecipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+  /recipes/recipe/{id}:
+    get:
+      operationId: getRecipe
+      description: Returns the recipe with the given ID.
+      parameters:
+        - name: id
+          description: ID of the recipe to be returned
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: recipe returned successfully
+        404:
+          description: no recipe found with given ID
+    delete:
+      operationId: delete
+      description: Deletes the recipe with the given ID.
+      parameters:
+        - name: id
+          description: ID of the recipe to be deleted
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: recipe deleted successfully
+        404:
+          description: no recipe found with given ID
+    patch:
+      operationId: patch
+      description: Deletes the recipe with the given ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '200':
+          description: 'recipe updated successfully; returns the whole updated recipe'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        410:
+          description: invalid patch request
+        404:
+          description: no recipe found with given ID
+
+  /recipes/search/recipes:
+    post:
+      operationId: searchRecipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipeSearch'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+components:
+  schemas:
+    Recipe:
+      required:
+        - instructions
+        - name
+        - serves
+        - vegetarian
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        serves:
+          type: integer
+          format: int32
+        vegetarian:
+          type: boolean
+        ingredients:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: string
+    RecipeSearch:
+      type: object
+      description: This resource represents a search of the stored recipies.
+      properties:
+        name:
+          type: string
+        serves:
+          type: integer
+          format: int32
+        tags:
+          type: array
+          items:
+            type: string
+        notTags:
+          type: array
+          items:
+            type: string
+        ingredients:
+          type: array
+          items:
+            type: string
+        notIngredients:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: string

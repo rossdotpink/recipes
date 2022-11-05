@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
+import tw.ross.recipes.search.RecipeSearch;
 
 import java.util.*;
 

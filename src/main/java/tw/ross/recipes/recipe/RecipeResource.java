@@ -1,7 +1,7 @@
 package tw.ross.recipes.recipe;
 
 import jakarta.inject.*;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.*;
