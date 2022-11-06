@@ -64,6 +64,7 @@ I have not written as many **unit tests** as I would like. I have written quite 
 I have not documented the API or the code as much as I would have liked. I would like at least to write more JavaDocs-style comments for the main functions.
 
 I'm not sure I would say the code is exactly 'production ready' (though I must say, that's a very cheeky requirement considering I'm not being paid for this 😉 ). Anyway, to help make this more production ready, I would especially like to:
+- implement some form of authentication and authorisation, though this was not in scope for the assignment
 - implement instrumentation and logging e.g. Azure Application Insights, OpenTelemetry, etc.
 - make exception handling more robust (I have not yet figured out how to handle exceptions globally e.g. JSON marshalling exceptions, before my GET/POST/etc. endpoints are called.)
 
