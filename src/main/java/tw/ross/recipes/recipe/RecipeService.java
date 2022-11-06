@@ -37,7 +37,7 @@ public class RecipeService {
     }
 
     // READ
-    public Recipe findRecipe(long id) {
+    public Recipe findRecipe(Integer id) {
         try {
             Recipe recipe = em.find(Recipe.class, id);
             if (Objects.isNull(recipe)) throw new EntityNotFoundException();
@@ -47,7 +47,7 @@ public class RecipeService {
         }
     }
 
-    public List<Recipe> getRecipeList(int serves) {
+    public List<Recipe> getRecipeList(Integer serves) {
         return em
                 .createQuery("SELECT r FROM Recipe r", Recipe.class)
                 .getResultList();
@@ -64,7 +64,7 @@ public class RecipeService {
     }
 
     // DELETE
-    public Recipe removeRecipe(long id)  {
+    public Recipe removeRecipe(Integer id)  {
         try {
             Recipe recipe = em.find(Recipe.class, id);
             if (Objects.isNull(recipe)) throw new EntityNotFoundException();
