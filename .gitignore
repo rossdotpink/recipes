@@ -1,3 +1,6 @@
-target/**
-**/*.jar
-**/*.war
+target/bootable-jar-build-artifacts
+target/classes
+target/generated-*
+target/maven-*
+target/recipes
+target/test-classes
