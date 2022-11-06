@@ -20,6 +20,12 @@ With it, you can:
 3. run `mvn package` to build a bootable `.jar` inside `target/`
 4. run `mvn wildfly-jar:run` to run it
 
+By default, it will run on http://127.0.0.1:8080/recipes
+
+## Documentation
+
+The code itself contains some JavaDoc comments. There is also a Postman collection for testing and an OpenAPI spec which can be used with e.g. Swagger UI or the online Swagger Editor.
+
 # Structure 
 ## Package structure
 
