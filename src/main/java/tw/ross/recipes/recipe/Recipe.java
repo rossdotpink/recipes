@@ -14,7 +14,7 @@ public class Recipe implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @NotEmpty
     private String name;
@@ -22,18 +22,13 @@ public class Recipe implements Serializable {
     @NotNull
     private Integer serves;
 
-    @NotNull
-    private Boolean vegetarian;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> tags;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ingredients;
 
     @NotEmpty
     private String instructions;
-
-//    public String toString() {
-//        return "Recipe called " + name;
-//    }
-
 
 }

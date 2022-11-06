@@ -15,11 +15,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class RecipeServiceTest {
 
-    @Mock
-    EntityManager entityManager;
-
     @InjectMocks
     RecipeService recipeService;
+
+    @Mock
+    EntityManager entityManager;
 
     @Test
     void addRecipe_givenValidRecipe_callsEntityManagerPersist() {
