@@ -1,18 +1,19 @@
 package tw.ross.recipes.recipe;
 
-import jakarta.ejb.Stateless;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ejb.*;
+import jakarta.enterprise.context.*;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
-import jakarta.transaction.Transactional;
-import tw.ross.recipes.search.RecipeSearch;
+import jakarta.transaction.*;
+import tw.ross.recipes.search.*;
 
 import java.util.*;
 
 /**
- * Service layer for the Recipe resources.
+ * Service layer for the Recipe resources. Handles all requests which interact with the
+ * JPA EntityManager.
  *
- * Always returns either the desired data, or a
+ * Always returns either the desired Recipe(s), or throws an Exception.
  *
  * @see         Recipe
  * @see         RecipeResource
@@ -47,15 +48,15 @@ public class RecipeService {
         }
     }
 
-    public List<Recipe> getRecipeList(Integer serves) {
+    public List<Recipe> getRecipeList(Integer pageNumber, Integer pageSize) {
+        Integer firstResult = ((pageNumber - 1) * pageSize) + 1;
+
         return em
                 .createQuery("SELECT r FROM Recipe r", Recipe.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(pageSize)
                 .getResultList();
     }
-
-//    public List<Recipe> getRecipes(int count, int offset) {
-//        return null;
-//    }
 
     // UPDATE
     public Recipe updateRecipe(Recipe recipe) {
@@ -74,6 +75,12 @@ public class RecipeService {
             throw e;
         }
     }
+
+    /**
+     *
+     * @param recipeSearch
+     * @return
+     */
 
     public List<Recipe> searchRecipes(RecipeSearch recipeSearch) {
         CriteriaQuery<Recipe> criteriaQuery = recipeSearch.buildQuery(em.getCriteriaBuilder());
