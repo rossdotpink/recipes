@@ -1,18 +1,27 @@
 package tw.ross.recipes.recipe;
 
 import jakarta.annotation.*;
+import jakarta.enterprise.context.*;
 import jakarta.inject.*;
 import jakarta.persistence.*;
-import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.*;
-import jakarta.ws.rs.ext.*;
-import jakarta.ws.rs.ext.Provider;
 
 import java.util.*;
 
+/**
+ * Resource layer for the Recipe resources. Handles all RESTful HTTP requests which
+ * want to interact with any Recipe resources.
+ *
+ * Always returns either the desired Recipe(s), or throws an Exception.
+ *
+ * @see         Recipe
+ * @see         RecipeResource
+ */
+
+@ApplicationScoped
 @Path("/recipe")
 public class RecipeResource {
 
@@ -32,7 +41,11 @@ public class RecipeResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Recipe createRecipe(Recipe recipe) {
-        recipeService.addRecipe(recipe);
+        try {
+            recipeService.addRecipe(recipe);
+        } catch (Exception e) {
+            throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);
+        }
         return recipe;
     }
 
@@ -52,7 +65,11 @@ public class RecipeResource {
             @QueryParam("pageSize") Integer pageSize) {
         if(Objects.isNull(pageNumber)) pageNumber = 1;
         if(Objects.isNull(pageSize)) pageSize = 10;
-        return recipeService.getRecipeList(pageNumber, pageSize);
+        try {
+            return recipeService.getRecipeList(pageNumber, pageSize);
+        } catch (Exception e) {
+            throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /** Handles requests to get a Recipe already in the database.
@@ -97,15 +114,19 @@ public class RecipeResource {
         }
 
         try {
-            // make sure to-be-updated resource exists
+            // ensure to-be-updated resource exists
             recipeService.findRecipe(id);
 
             // update and return resource
             return recipeService.updateRecipe(recipe);
 
         }
-        catch (EntityNotFoundException e) {throw new NotFoundException();}
-        catch (Exception e) { throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);}
+        catch (EntityNotFoundException e) {
+            throw new NotFoundException();
+        }
+        catch (Exception e) {
+            throw new ServerErrorException(Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // DELETE

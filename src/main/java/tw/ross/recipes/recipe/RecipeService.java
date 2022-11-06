@@ -49,7 +49,7 @@ public class RecipeService {
     }
 
     public List<Recipe> getRecipeList(Integer pageNumber, Integer pageSize) {
-        Integer firstResult = ((pageNumber - 1) * pageSize) + 1;
+        Integer firstResult = ((pageNumber - 1) * pageSize);
 
         return em
                 .createQuery("SELECT r FROM Recipe r", Recipe.class)

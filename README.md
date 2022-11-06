@@ -68,4 +68,3 @@ Whilst the `recipe` and `search` packages are separate, they are rather **tightl
 There are only classes and **no interfaces** used. This is not so bad _right now_ since the project is small, but is obviously not scalable. I think as soon as another resource was added besides Recipe, it would become clearer to me where it would make sense to draw interface boundaries.
 
 As stated already, exception handling within some of the JAX-RS / Jakarta EE framework is not taken care of. Malformed calls will return a `500` code with a plaintext error (not even JSON). This is something I did not manage to find a good solution for yet.
-
