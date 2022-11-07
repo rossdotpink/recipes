@@ -28,14 +28,13 @@ public class Recipe implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ingredients;
 
-    public void setTags(List<String> tags) {
-        List<String> lowercaseTags = tags
-                .stream()
-                .map(String::toLowerCase)
-                .toList();
-        this.tags = lowercaseTags;
-    }
-
     @NotEmpty
     private String instructions;
+
+    public void setTags(List<String> tags) {
+        this.tags = tags
+                .stream()
+                .map(String::toLowerCase)
+                .toList();;
+    }
 }

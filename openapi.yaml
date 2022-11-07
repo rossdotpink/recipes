@@ -1,41 +1,62 @@
 openapi: 3.0.1
 info:
+  description: This project provides a RESTful web service for managing recipies.
   title: recipes
   version: '1.0-SNAPSHOT'
+externalDocs:
+  url: https://github.com/rossdotpink/recipes
+  description: Project home
+servers:
+  - url: http://127.0.0.1:8080
 paths:
   /recipes/recipe:
     get:
       operationId: getRecipes
-      description: Returns all recipes.
+      description: Returns all recipes. Paginated; returns page 1 with 10 results by default.
       parameters:
-        - name: serves
+        - name: pageNumber
           in: query
           schema:
             type: integer
             format: int32
+            default: 1
+          description: Page number for results pagination
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+          description: Page size for results pagination
       responses:
-        default:
-          description: default response
+        200:
+          description: successful response
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
+        500:
+          description: internal server error
     post:
       operationId: createRecipe
+      description: Adds a new recipe. Request body must not include an 'id' field, unlike the normal Request schema. JPA will autogenerate an ID for us.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Recipe'
+              $ref: '#/components/schemas/RecipeWithoutId'
       responses:
-        default:
-          description: default response
+        200:
+          description: successful response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipe'
+        404:
+          description: not found error
+        500:
+          description: internal server error
   /recipes/recipe/{id}:
     get:
       operationId: getRecipe
@@ -50,9 +71,15 @@ paths:
             format: int32
       responses:
         200:
-          description: recipe returned successfully
+          description: successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
         404:
-          description: no recipe found with given ID
+          description: not found error
+        500:
+          description: internal server error
     delete:
       operationId: delete
       description: Deletes the recipe with the given ID.
@@ -66,12 +93,14 @@ paths:
             format: int32
       responses:
         200:
-          description: recipe deleted successfully
+          description: successful response
         404:
-          description: no recipe found with given ID
+          description: not found error
+        500:
+          description: internal server error
     patch:
       operationId: patch
-      description: Deletes the recipe with the given ID.
+      description: Updates the recipe with the given ID.
       parameters:
         - name: id
           in: path
@@ -85,16 +114,18 @@ paths:
             schema:
               $ref: '#/components/schemas/Recipe'
       responses:
-        '200':
-          description: 'recipe updated successfully; returns the whole updated recipe'
+        200:
+          description: successful response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipe'
+        404:
+          description: not found error
         410:
           description: invalid patch request
-        404:
-          description: no recipe found with given ID
+        500:
+          description: internal server error
 
   /recipes/search/recipes:
     post:
@@ -105,22 +136,25 @@ paths:
             schema:
               $ref: '#/components/schemas/RecipeSearch'
       responses:
-        default:
-          description: default response
+        200:
+          description: successful response
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
+        500:
+          description: internal server error
 components:
   schemas:
     Recipe:
       required:
-        - instructions
         - name
         - serves
-        - vegetarian
+        - tags
+        - ingredients
+        - instructions
       type: object
       properties:
         id:
@@ -131,8 +165,34 @@ components:
         serves:
           type: integer
           format: int32
-        vegetarian:
-          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        ingredients:
+          type: array
+          items:
+            type: string
+        instructions:
+          type: string
+    RecipeWithoutId:
+      required:
+        - name
+        - serves
+        - tags
+        - ingredients
+        - instructions
+      type: object
+      properties:
+        name:
+          type: string
+        serves:
+          type: integer
+          format: int32
+        tags:
+          type: array
+          items:
+            type: string
         ingredients:
           type: array
           items:
