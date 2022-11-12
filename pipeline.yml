@@ -1,0 +1,36 @@
+---
+resources:
+  - name: recipes
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/rossdotpink/recipes
+jobs:
+  # Try to trigger the job multiple times and see what happens
+  - name: serial-job
+    public: true
+    serial: true
+    plan:
+      - get: recipes
+      - task: simple-task
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: { repository: busybox }
+          run:
+            path: echo
+            args: ["Hello, world!"]
+      - task: mvn
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: ghcr.io/graalvm/jdk
+              variant: ol9-java17
+          inputs:
+            - name: recipes
+          run:
+            path: ./recipes/mvnw
+            args: ["package"]
