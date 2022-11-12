@@ -5,6 +5,7 @@ resources:
     icon: github
     source:
       uri: https://github.com/rossdotpink/recipes
+      branch: feature/concourse_ci
 jobs:
   # Try to trigger the job multiple times and see what happens
   - name: serial-job
